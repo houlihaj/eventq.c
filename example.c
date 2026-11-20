@@ -35,7 +35,10 @@ int main(int argc, char** argv)
     event_t app_event;        /*  */
     uint8_t eventq_capacity;  /*  */
 
-    eventq_init(&eventq);  /* initialize all members */
+    uint8_t app_event_queue_size = 64;
+    event_t app_event_queue[app_event_queue_size];
+
+    eventq_init(&eventq, app_event_queue, app_event_queue_size);
 
     eventq_enqueue(&eventq, EVENT_1);
     eventq_enqueue(&eventq, EVENT_3);

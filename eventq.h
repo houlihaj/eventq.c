@@ -35,13 +35,24 @@ extern "C" {
 
 #include <stdint.h>
 
+#define EVENTQ_SIZE 64
+
 typedef struct eventq_s eventq_t;
-typedef enum event_e event_t;
 
 typedef enum {
     EVENTQ_SUCCESS = 0,
     EVENTQ_FAILURE,
+    EVENTQ_EMTPY_QUEUE,  /* queue capacity is zero (i.e. zero items in the queue) */
+    EVENTQ_FULL_QUEUE,   /* queue capacity is EVENTQ_SIZE (i.e. EVENTQ_SIZE items in the queue) */
 } eventq_status_t;
+
+typedef enum {
+    EVENT_NULL = 0,
+    EVENT_1,
+    EVENT_2,
+    EVENT_3,
+    EVENT_4,
+} event_t;
 
 struct eventq_s {
     uint8_t size;      /* size of the queue (i.e. maximum number of items in the queue) */
@@ -49,16 +60,8 @@ struct eventq_s {
     event_t* queue;    /* an array to contain the event items */
 };
 
-enum event_e {
-    EVENT_NULL = 0,
-    EVENT_1,
-    EVENT_2,
-    EVENT_3,
-    EVENT_4,
-};
-
-eventq_status_t eventq_init(eventq_t* self);
-eventq_status_t eventq_reset(eventq_t* self);
+eventq_status_t eventq_init(eventq_t* self, event_t* queue, uint8_t size);
+eventq_status_t eventq_flush(eventq_t* self);
 eventq_status_t eventq_enqueue(eventq_t* self, event_t event);
 eventq_status_t eventq_dequeue(eventq_t* self, event_t* event);
 eventq_status_t eventq_get_capacity(eventq_t* self, uint8_t* capacity);

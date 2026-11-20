@@ -28,12 +28,6 @@
 #include "eventq.h"
 
 
-#define EVENTQ_SIZE 64
-
-
-static event_t event_queue[EVENTQ_SIZE] = {0};
-
-
 /**
  * @brief Initialize eventq_t structure passed by pointer.
  * @note In-depth description of the function
@@ -41,35 +35,44 @@ static event_t event_queue[EVENTQ_SIZE] = {0};
  * @param self  An instance of eventq_t
  * @return
  */
-eventq_status_t eventq_init(eventq_t* self)
+eventq_status_t eventq_init(eventq_t* self, event_t* queue, uint8_t size)
 {
-    self->size = EVENTQ_SIZE;
+    self->size = size;
     self->capacity = 0;
-    self->queue = event_queue;
+    self->queue = queue;
+    for (int i = 0; i < self->size; i++)
+    {
+        self->queue[i] = EVENT_NULL;
+    }
     return EVENTQ_SUCCESS;
 }
 
 
 /**
- * @brief Reset the PID loop
+ * @brief Flush the event queue
  *
  * @param[in] self  An instance of eventq_t
  * @return
  */
-eventq_status_t eventq_reset(eventq_t* self)
+eventq_status_t eventq_flush(eventq_t* self)
 {
     return EVENTQ_SUCCESS;
 }
 
 
 /**
- * @brief Reset the PID loop
+ * @brief Put an item in the queue
  *
- * @param[in] self  An instance of eventq_t
+ * @param[in]  self  An instance of eventq_t
+ * @param[in] event
  * @return
  */
 eventq_status_t eventq_enqueue(eventq_t* self, event_t event)
 {
+    if (self->capacity >= EVENTQ_SIZE)
+    {
+        return EVENTQ_FULL_QUEUE;
+    }
     self->queue[self->capacity] = event;
     self->capacity++;
     return EVENTQ_SUCCESS;
@@ -77,13 +80,18 @@ eventq_status_t eventq_enqueue(eventq_t* self, event_t event)
 
 
 /**
- * @brief Reset the PID loop
+ * @brief Get the next item in the queue
  *
- * @param[in] self  An instance of eventq_t
+ * @param[in]   self  An instance of eventq_t
+ * @param[out] event
  * @return
  */
 eventq_status_t eventq_dequeue(eventq_t* self, event_t* event)
 {
+    if (self->capacity <= 0)
+    {
+        return EVENTQ_EMTPY_QUEUE;
+    }
     *event = self->queue[0];
     for (int i = 0; i + 1 < self->capacity; i++)
     {
@@ -96,10 +104,10 @@ eventq_status_t eventq_dequeue(eventq_t* self, event_t* event)
 
 
 /**
- * @brief Get the proportional gain, Kp
+ * @brief Get the number of items in the queue
  *
  * @param[in]      self  An instance of eventq_t
- * @param[out] capacity  proportional gain
+ * @param[out] capacity  the number of items in the queue
  * @return
  */
 eventq_status_t eventq_get_capacity(eventq_t* self, uint8_t* capacity)
