@@ -76,6 +76,10 @@ eventq_t* eventq_get_instance()
  */
 eventq_status_t eventq_flush()
 {
+    for (int i = 0; i < eventq.size; i++)
+    {
+        eventq.queue[i] = EVENT_NULL;
+    }
     return EVENTQ_SUCCESS;
 }
 
