@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+#include <stdint.h>  /* uint8_t */
 
 #define EVENTQ_SIZE 64
 
@@ -60,11 +60,12 @@ struct eventq_s {
     event_t* queue;    /* an array to contain the event items */
 };
 
-eventq_status_t eventq_init(eventq_t* self, event_t* queue, uint8_t size);
-eventq_status_t eventq_flush(eventq_t* self);
-eventq_status_t eventq_enqueue(eventq_t* self, event_t event);
-eventq_status_t eventq_dequeue(eventq_t* self, event_t* event);
-eventq_status_t eventq_get_capacity(eventq_t* self, uint8_t* capacity);
+eventq_status_t eventq_init();
+eventq_t* eventq_get_instance();
+eventq_status_t eventq_flush();
+eventq_status_t eventq_enqueue(event_t event);
+eventq_status_t eventq_dequeue(event_t* event);
+uint8_t eventq_get_capacity();
 
 #ifdef __cplusplus
 }  /* End of CPP guard */

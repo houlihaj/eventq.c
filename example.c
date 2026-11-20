@@ -31,35 +31,29 @@
 
 int main(int argc, char** argv)
 {
-    eventq_t eventq;          /* implement global eventq_t object */
-    event_t app_event;        /*  */
-    uint8_t eventq_capacity;  /*  */
+    event_t app_event;
 
-    uint8_t app_event_queue_size = 64;
-    event_t app_event_queue[app_event_queue_size];
+    eventq_init();
 
-    eventq_init(&eventq, app_event_queue, app_event_queue_size);
+    eventq_enqueue(EVENT_1);
+    eventq_enqueue(EVENT_3);
 
-    eventq_enqueue(&eventq, EVENT_1);
-    eventq_enqueue(&eventq, EVENT_3);
-
-    eventq_dequeue(&eventq, &app_event);
+    eventq_dequeue(&app_event);
     printf("Deque event :  %d\n", app_event);
 
-    eventq_enqueue(&eventq, EVENT_2);
-    eventq_enqueue(&eventq, EVENT_4);
-    eventq_enqueue(&eventq, EVENT_1);
+    eventq_enqueue(EVENT_2);
+    eventq_enqueue(EVENT_4);
+    eventq_enqueue(EVENT_1);
 
-    eventq_get_capacity(&eventq, &eventq_capacity);
-    printf("Event queue capacity :  %d\n", eventq_capacity);
+    printf("Event queue capacity :  %d\n", eventq_get_capacity());
 
-    eventq_dequeue(&eventq, &app_event);
+    eventq_dequeue(&app_event);
     printf("Deque event :  %d\n", app_event);
-    eventq_dequeue(&eventq, &app_event);
+    eventq_dequeue(&app_event);
     printf("Deque event :  %d\n", app_event);
-    eventq_dequeue(&eventq, &app_event);
+    eventq_dequeue(&app_event);
     printf("Deque event :  %d\n", app_event);
-    eventq_dequeue(&eventq, &app_event);
+    eventq_dequeue(&app_event);
     printf("Deque event :  %d\n", app_event);
 
     return 0;

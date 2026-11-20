@@ -26,6 +26,14 @@
 * SOFTWARE.
 */
 #include "eventq.h"
+#include <stdint.h>  /* uint8_t */
+
+
+#define EVENTQ_SIZE 64
+
+
+static eventq_t eventq;
+static event_t event_queue[EVENTQ_SIZE] = {0};
 
 
 /**
@@ -35,16 +43,28 @@
  * @param self  An instance of eventq_t
  * @return
  */
-eventq_status_t eventq_init(eventq_t* self, event_t* queue, uint8_t size)
+eventq_status_t eventq_init()
 {
-    self->size = size;
-    self->capacity = 0;
-    self->queue = queue;
-    for (int i = 0; i < self->size; i++)
+    eventq.size = EVENTQ_SIZE;
+    eventq.capacity = 0;
+    eventq.queue = event_queue;
+    for (int i = 0; i < eventq.size; i++)
     {
-        self->queue[i] = EVENT_NULL;
+        eventq.queue[i] = EVENT_NULL;
     }
     return EVENTQ_SUCCESS;
+}
+
+
+/**
+ * @brief A brief explanation of the function
+ *
+ * @param[in] self  An instance of eventq_t
+ * @return
+ */
+eventq_t* eventq_get_instance()
+{
+    return &eventq;
 }
 
 
@@ -54,7 +74,7 @@ eventq_status_t eventq_init(eventq_t* self, event_t* queue, uint8_t size)
  * @param[in] self  An instance of eventq_t
  * @return
  */
-eventq_status_t eventq_flush(eventq_t* self)
+eventq_status_t eventq_flush()
 {
     return EVENTQ_SUCCESS;
 }
@@ -67,14 +87,14 @@ eventq_status_t eventq_flush(eventq_t* self)
  * @param[in] event
  * @return
  */
-eventq_status_t eventq_enqueue(eventq_t* self, event_t event)
+eventq_status_t eventq_enqueue(event_t event)
 {
-    if (self->capacity >= EVENTQ_SIZE)
+    if (eventq.capacity >= EVENTQ_SIZE)
     {
         return EVENTQ_FULL_QUEUE;
     }
-    self->queue[self->capacity] = event;
-    self->capacity++;
+    eventq.queue[eventq.capacity] = event;
+    eventq.capacity++;
     return EVENTQ_SUCCESS;
 }
 
@@ -86,19 +106,19 @@ eventq_status_t eventq_enqueue(eventq_t* self, event_t event)
  * @param[out] event
  * @return
  */
-eventq_status_t eventq_dequeue(eventq_t* self, event_t* event)
+eventq_status_t eventq_dequeue(event_t* event)
 {
-    if (self->capacity <= 0)
+    if (eventq.capacity <= 0)
     {
         return EVENTQ_EMTPY_QUEUE;
     }
-    *event = self->queue[0];
-    for (int i = 0; i + 1 < self->capacity; i++)
+    *event = eventq.queue[0];
+    for (int i = 0; i + 1 < eventq.capacity; i++)
     {
-        self->queue[i] = self->queue[i + 1];
+        eventq.queue[i] = eventq.queue[i + 1];
     }
-    self->queue[self->capacity - 1] = EVENT_NULL;
-    self->capacity--;
+    eventq.queue[eventq.capacity - 1] = EVENT_NULL;
+    eventq.capacity--;
     return EVENTQ_SUCCESS;
 }
 
@@ -110,8 +130,7 @@ eventq_status_t eventq_dequeue(eventq_t* self, event_t* event)
  * @param[out] capacity  the number of items in the queue
  * @return
  */
-eventq_status_t eventq_get_capacity(eventq_t* self, uint8_t* capacity)
+uint8_t eventq_get_capacity()
 {
-    *capacity = self->capacity;
-    return EVENTQ_SUCCESS;
+    return eventq.capacity;
 }
