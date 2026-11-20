@@ -50,9 +50,13 @@ int main(int argc, char** argv)
     eventq_get_capacity(&eventq, &eventq_capacity);
     printf("Event queue capacity :  %d\n", eventq_capacity);
 
+    eventq_dequeue(&eventq, &app_event);
     printf("Deque event :  %d\n", app_event);
+    eventq_dequeue(&eventq, &app_event);
     printf("Deque event :  %d\n", app_event);
+    eventq_dequeue(&eventq, &app_event);
     printf("Deque event :  %d\n", app_event);
+    eventq_dequeue(&eventq, &app_event);
     printf("Deque event :  %d\n", app_event);
 
     return 0;
